@@ -3,11 +3,14 @@ package com.example.JwtAnanthan.controller;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -18,6 +21,7 @@ import com.example.JwtAnanthan.model.User;
 import com.example.JwtAnanthan.model.UserDTO;
 import com.example.JwtAnanthan.service.JwtService;
 import com.example.JwtAnanthan.service.MyUserDetailsService;
+import com.example.JwtAnanthan.service.ProductService;
 import com.example.JwtAnanthan.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +35,9 @@ public class UserController {
 
 	@Autowired
 	private JwtService jwtService;
+	
+	@Autowired
+	private ProductService productService;
 
 	@Autowired
 	private MyUserDetailsService myUserDetailsService;
@@ -98,5 +105,15 @@ public class UserController {
 	            }
 	        }
 	        return "Invalid token";
+	    }
+	 
+	 
+	 
+	 //need to be tested
+	 @DeleteMapping("/remove/{productId}")
+	    public ResponseEntity<String> removeProduct(@PathVariable Long productId, @RequestHeader("Authorization") String authHeader) {
+	        String token = authHeader.replace("Bearer ", "");
+	        String result = productService.removeProductFromCart(productId, token);
+	        return ResponseEntity.ok(result);
 	    }
 }
